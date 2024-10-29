@@ -1,0 +1,207 @@
+openapi: 3.1.0
+info:
+  title: GetLago+ API
+  version: 1.0.0
+paths:
+  /v1/entitlement/authorize:
+    post:
+      tags:
+        - Authorization entitlement
+      summary: Authorize user action
+      description: |
+        Authorize publisher user action on resouces based on Amazon Verified Permissions (AVP) entitlements. Reference to [this story technical design](https://docs.google.com/document/d/1ggbf4sydK9gM4UAvSkrj5sWCrm7KZNUBttgv0IYUROM/edit?usp=sharing)
+      operationId: authorizeEntitlement
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - external_customer_id
+                - publisher_id
+                - action_name
+                - resource
+                - timestamp
+              properties:
+                external_customer_id:
+                  type: string
+                publisher_id:
+                  type: string
+                action_name:
+                  type: string
+                context:
+                  type: object
+                resource:
+                  type: object
+                  required:
+                    - id
+                    - type  
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+                    type:
+                      type: string
+                    author:
+                      type: string
+                    tags:
+                      type: array
+                      items:
+                        type: string
+                    category:
+                      type: array
+                      items:
+                        type: string
+                timestamp:
+                  type: string
+                  format: date-time
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Authorization status
+                    example: "Allow"
+                  code:
+                    type: integer
+                    description: HTTP status code
+                    example: 200
+                  message:
+                    type: string
+                    description: Authorization message
+                    example: "Authorized"
+                  extra:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                      organization_id:
+                        type: string
+                        format: uuid
+                      name:
+                        type: string
+                      created_at:
+                        type: string
+                        format: date-time
+                      updated_at:
+                        type: string
+                        format: date-time
+                      code:
+                        type: string
+                      interval:
+                        type: string
+                      description:
+                        type: string
+                      amount_cents:
+                        type: integer
+                      amount_currency:
+                        type: string
+                      trial_period:
+                        type: number
+                        format: float
+                      pay_in_advance:
+                        type: boolean
+                      bill_charges_monthly:
+                        type: string
+                        nullable: true
+                      parent_id:
+                        type: string
+                        nullable: true
+                      deleted_at:
+                        type: string
+                        format: date-time
+                        nullable: true
+                      pending_deletion:
+                        type: boolean
+                      invoice_display_name:
+                        type: string
+                        nullable: true
+                      policy_id:
+                        type: string
+                example:
+                  status: "Allow"
+                  code: 200
+                  message: "Authorized"
+                  extra:
+                    id: "966b8229-f5fa-4208-8230-6d797859cb70"
+                    organization_id: "67f43b7d-71d9-471d-a307-effb4432249d"
+                    name: "Simple test"
+                    created_at: "2024-10-26T04:53:18.122Z"
+                    updated_at: "2024-10-26T04:53:18.122Z"
+                    code: "simple_test"
+                    interval: "monthly"
+                    description: ""
+                    amount_cents: 100
+                    amount_currency: "USD"
+                    trial_period: 0.0
+                    pay_in_advance: true
+                    bill_charges_monthly: null
+                    parent_id: null
+                    deleted_at: null
+                    pending_deletion: false
+                    invoice_display_name: null
+                    policy_id: "XMzXtcawhn3C8P4TKDTNmd"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: ["Deny"]
+                    description: Authorization status
+                  code:
+                    type: integer
+                    description: HTTP status code
+                  message:
+                    type: string
+                    description: Error message
+                  extra:
+                    type: object
+                example:
+                  status: "Deny"
+                  code: 401
+                  message: "No active subscription found"
+                  extra: {}
+        "422":
+          description: Request payload error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: ["Deny"]
+                    description: Authorization status
+                  code:
+                    type: integer
+                    description: HTTP status code
+                  message:
+                    type: string
+                    description: Error message
+                  extra:
+                    type: object
+                example:
+                  status: "Deny"
+                  code: 422
+                  message: "Request payload error"
+                  extra: {}
+      security:
+        - bearerAuth: []
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
