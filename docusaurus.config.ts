@@ -18,8 +18,8 @@ const config: Config = {
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: "moneta", // Usually your GitHub org/user name.
-  projectName: "publisher-documents", // Usually your repo name.
+  organizationName: "Pressingly", // Usually your GitHub org/user name.
+  projectName: "publisher-document", // Usually your repo name.
 
   presets: [
     [
